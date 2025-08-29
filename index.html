@@ -1,313 +1,267 @@
-import React, { useState, useEffect } from 'react';
-
-const MangoEstate = () => {
-  const [activeSection, setActiveSection] = useState('overview');
-  const [formData, setFormData] = useState({
-    guestName: '',
-    checkIn: '',
-    checkOut: '',
-    room: 'casita',
-    guests: '2',
-    notes: ''
-  });
-
-  const showSection = (sectionId) => {
-    setActiveSection(sectionId);
-  };
-
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleBookingSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!formData.guestName || !formData.checkIn || !formData.checkOut) {
-      alert('Please fill in all required fields');
-      return;
-    }
-    
-    setActiveSection('success');
-    setFormData({
-      guestName: '',
-      checkIn: '',
-      checkOut: '',
-      room: 'casita',
-      guests: '2',
-      notes: ''
-    });
-  };
-
-  const generateCalendar = () => {
-    const approvedDays = [15, 16, 17, 22, 23, 24];
-    const pendingDays = [5, 6];
-    const days = [];
-    
-    for (let i = 0; i < 35; i++) {
-      const day = i - 5;
-      
-      if (day <= 0) {
-        days.push(<div key={i} className="calendar-day empty"></div>);
-      } else {
-        let className = 'calendar-day available';
-        let guestName = '';
-        
-        if (approvedDays.includes(day)) {
-          className = 'calendar-day approved';
-          guestName = day >= 15 && day <= 17 ? 'Sarah & Mike' : 'Rodriguez';
-        } else if (pendingDays.includes(day)) {
-          className = 'calendar-day pending';
-          guestName = 'Pending';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mango Estate - La Jolla</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        days.push(
-          <div key={i} className={className}>
-            <div>{day}</div>
-            {guestName && <div className="booking-guest">{guestName}</div>}
-          </div>
-        );
-      }
-    }
-    
-    return days;
-  };
 
-  return (
-    <div style={{
-      fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-      background: 'linear-gradient(135deg, #faf7f2 0%, #f5f0e8 100%)',
-      minHeight: '100vh'
-    }}>
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap');
-        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #faf7f2 0%, #f5f0e8 100%);
+            min-height: 100vh;
+        }
+
         .hero {
-          height: 100vh;
-          position: relative;
-          background: linear-gradient(135deg, 
-            rgba(123, 104, 238, 0.9) 0%, 
-            rgba(106, 90, 205, 0.8) 100%),
-            url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="terracotta" patternUnits="userSpaceOnUse" width="100" height="100"><rect fill="%23f5f0e8" width="100" height="100"/><circle cx="50" cy="50" r="30" fill="%23cd853f" opacity="0.1"/></pattern><pattern id="shutters" patternUnits="userSpaceOnUse" width="60" height="100"><rect fill="%23f5f0e8" width="60" height="100"/><rect fill="%237b68ee" x="5" y="10" width="20" height="80" rx="2"/><rect fill="%237b68ee" x="35" y="10" width="20" height="80" rx="2"/></pattern></defs><rect fill="url(%23terracotta)" width="1200" height="400"/><rect fill="url(%23shutters)" x="200" y="100" width="180" height="200"/><rect fill="url(%23shutters)" x="600" y="150" width="180" height="200"/><rect fill="%23228b22" opacity="0.3" x="0" y="400" width="1200" height="200"/><circle fill="%23228b22" opacity="0.4" cx="300" cy="500" r="40"/><circle fill="%23228b22" opacity="0.4" cx="700" cy="480" r="50"/><circle fill="%23228b22" opacity="0.4" cx="1000" cy="520" r="35"/></svg>');
-          background-size: cover;
-          background-position: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          overflow: hidden;
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, 
+                rgba(123, 104, 238, 0.8) 0%, 
+                rgba(106, 90, 205, 0.7) 100%),
+                url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%206.webp');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
         }
 
         .hero::before {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="30" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="20" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="30" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>');
-          animation: float 20s infinite linear;
-          pointer-events: none;
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="30" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="20" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="70" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="30" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>');
+            animation: float 20s infinite linear;
+            pointer-events: none;
         }
 
         @keyframes float {
-          0% { transform: translate(-50%, -50%) rotate(0deg); }
-          100% { transform: translate(-50%, -50%) rotate(360deg); }
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         .hero-content {
-          text-align: center;
-          z-index: 10;
-          position: relative;
-          background: rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(20px);
-          padding: 4rem;
-          border-radius: 2rem;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          max-width: 600px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 4rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .hero h1 {
-          font-family: 'Dancing Script', cursive;
-          font-size: 4.5rem;
-          font-weight: 700;
-          margin-bottom: 1rem;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-family: 'Dancing Script', cursive;
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .hero .location {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.5rem;
-          font-weight: 500;
-          margin-bottom: 0.5rem;
-          opacity: 0.95;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            opacity: 0.95;
         }
 
         .hero .subtitle {
-          font-size: 1.1rem;
-          opacity: 0.9;
-          margin-bottom: 2rem;
-          font-weight: 300;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            font-weight: 300;
         }
 
         .hero-buttons {
-          display: flex;
-          gap: 1rem;
-          justify-content: center;
-          flex-wrap: wrap;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
-          padding: 1rem 2rem;
-          border: none;
-          border-radius: 2rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-size: 1rem;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: rgba(255, 255, 255, 0.2);
-          color: white;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .btn:hover {
-          background: rgba(255, 255, 255, 0.3);
-          transform: translateY(-2px);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .nav {
-          position: sticky;
-          top: 0;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(20px);
-          padding: 1rem 0;
-          z-index: 1000;
-          border-bottom: 1px solid rgba(123, 104, 238, 0.1);
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(123, 104, 238, 0.1);
         }
 
         .nav-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
         }
 
         .nav-brand {
-          font-family: 'Dancing Script', cursive;
-          font-size: 1.8rem;
-          color: #7b68ee;
-          font-weight: 600;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #7b68ee;
+            font-weight: 600;
         }
 
         .nav-links {
-          display: flex;
-          gap: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
         }
 
         .nav-btn {
-          padding: 0.5rem 1.5rem;
-          background: transparent;
-          border: 2px solid transparent;
-          border-radius: 1.5rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-weight: 500;
-          color: #666;
+            padding: 0.5rem 1.5rem;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #666;
         }
 
         .nav-btn.active {
-          background: #7b68ee;
-          color: white;
-          box-shadow: 0 4px 15px rgba(123, 104, 238, 0.3);
+            background: #7b68ee;
+            color: white;
+            box-shadow: 0 4px 15px rgba(123, 104, 238, 0.3);
         }
 
         .nav-btn:not(.active):hover {
-          background: rgba(123, 104, 238, 0.1);
-          border-color: rgba(123, 104, 238, 0.2);
+            background: rgba(123, 104, 238, 0.1);
+            border-color: rgba(123, 104, 238, 0.2);
         }
 
         .content {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
         }
 
         .property-gallery {
-          display: grid;
-          grid-template-columns: 2fr 1fr 1fr;
-          grid-template-rows: 250px 200px;
-          gap: 1rem;
-          margin-bottom: 4rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-rows: 250px 200px;
+            gap: 1rem;
+            margin-bottom: 4rem;
         }
 
         .property-image {
-          border-radius: 1rem;
-          overflow: hidden;
-          position: relative;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s ease;
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            background-size: cover;
+            background-position: center;
         }
 
         .property-image:hover {
-          transform: translateY(-5px);
+            transform: translateY(-5px);
         }
 
         .property-image.main {
-          grid-row: 1 / 3;
-          background: linear-gradient(135deg, rgba(123, 104, 238, 0.1), rgba(205, 133, 63, 0.2)),
-                      url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600"><rect fill="%23f5f0e8" width="400" height="600"/><rect fill="%237b68ee" x="80" y="100" width="60" height="120" rx="5"/><rect fill="%237b68ee" x="260" y="100" width="60" height="120" rx="5"/><rect fill="%23cd853f" x="0" y="400" width="400" height="200"/><circle fill="%23228b22" cx="100" cy="350" r="30"/><circle fill="%23228b22" cx="300" cy="320" r="40"/><circle fill="%23228b22" cx="200" cy="380" r="25"/><rect fill="%23a0522d" x="50" y="450" width="60" height="80" rx="30"/><rect fill="%23a0522d" x="150" y="430" width="80" height="100" rx="40"/><rect fill="%23a0522d" x="280" y="460" width="70" height="90" rx="35"/></svg>');
-          background-size: cover;
-          background-position: center;
+            grid-row: 1 / 3;
+            background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)),
+                             url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%203.webp');
+        }
+
+        .property-image.casita {
+            background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)),
+                             url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%202.webp');
+        }
+
+        .property-image.garden {
+            background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)),
+                             url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%204.webp');
+        }
+
+        .property-image.twins {
+            background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)),
+                             url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%201.webp');
+        }
+
+        .property-image.exterior {
+            background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)),
+                             url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%205.webp');
         }
 
         .property-overlay {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-          color: white;
-          padding: 1.5rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 1.5rem;
         }
 
         .property-title {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.3rem;
-          font-weight: 600;
-          margin-bottom: 0.25rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
 
         .property-desc {
-          font-size: 0.9rem;
-          opacity: 0.9;
+            font-size: 0.9rem;
+            opacity: 0.9;
         }
 
         .rooms-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-          gap: 2rem;
-          margin-bottom: 4rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
         }
 
         .room-card {
-          background: white;
-          border-radius: 1.5rem;
-          overflow: hidden;
-          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-          border-top: 4px solid var(--accent-color);
+            background: white;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid var(--accent-color);
         }
 
         .room-card:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
         }
 
         .room-card.casita { --accent-color: #7b68ee; }
@@ -315,688 +269,673 @@ const MangoEstate = () => {
         .room-card.flexible { --accent-color: #f59e0b; }
 
         .room-header {
-          height: 200px;
-          position: relative;
-          background: linear-gradient(135deg, var(--accent-color), rgba(255, 255, 255, 0.1));
-          display: flex;
-          align-items: flex-end;
-          padding: 1.5rem;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .room-card.casita .room-header {
+            background-image: linear-gradient(135deg, rgba(123, 104, 238, 0.3), rgba(0, 0, 0, 0.2)),
+                             url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%202.webp');
+        }
+
+        .room-card.twins .room-header {
+            background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(0, 0, 0, 0.2)),
+                             url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%201.webp');
+        }
+
+        .room-card.flexible .room-header {
+            background-image: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(0, 0, 0, 0.2)),
+                             url('https://raw.githubusercontent.com/albinococonut/themangoestate/main/Image%204.webp');
         }
 
         .room-content {
-          padding: 2rem;
+            padding: 2rem;
         }
 
         .room-title {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
         }
 
         .room-subtitle {
-          color: #666;
-          font-size: 1.1rem;
-          margin-bottom: 1rem;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
         }
 
         .room-description {
-          color: #888;
-          font-size: 0.9rem;
-          font-style: italic;
-          line-height: 1.5;
+            color: #888;
+            font-size: 0.9rem;
+            font-style: italic;
+            line-height: 1.5;
         }
 
         .calendar-container {
-          background: white;
-          border-radius: 1.5rem;
-          padding: 2rem;
-          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-          margin-bottom: 3rem;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
         }
 
         .calendar-header {
-          text-align: center;
-          margin-bottom: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
         }
 
         .calendar-title {
-          font-family: 'Playfair Display', serif;
-          font-size: 2rem;
-          color: #333;
-          margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 0.5rem;
         }
 
         .calendar-grid {
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          gap: 0.5rem;
-          margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .calendar-day-header {
-          padding: 1rem;
-          text-align: center;
-          font-weight: 600;
-          color: #666;
-          font-size: 0.9rem;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
         }
 
         .calendar-day {
-          aspect-ratio: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          border-radius: 0.5rem;
-          font-size: 0.9rem;
-          transition: all 0.2s ease;
-          cursor: pointer;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
 
         .calendar-day.empty {
-          color: #ccc;
-          background: #f9fafb;
+            color: #ccc;
+            background: #f9fafb;
         }
 
         .calendar-day.available {
-          background: white;
-          border: 2px solid #e5e7eb;
-          color: #333;
+            background: white;
+            border: 2px solid #e5e7eb;
+            color: #333;
         }
 
         .calendar-day.available:hover {
-          border-color: #7b68ee;
-          background: #f8f7ff;
+            border-color: #7b68ee;
+            background: #f8f7ff;
         }
 
         .calendar-day.approved {
-          background: #d1fae5;
-          border: 2px solid #10b981;
-          color: #065f46;
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            color: #065f46;
         }
 
         .calendar-day.pending {
-          background: #fef3c7;
-          border: 2px solid #f59e0b;
-          color: #92400e;
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            color: #92400e;
         }
 
         .booking-guest {
-          font-size: 0.7rem;
-          font-weight: 600;
-          margin-top: 0.25rem;
-          text-align: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.25rem;
+            text-align: center;
         }
 
         .booking-lists {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-          gap: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
         }
 
         .booking-list {
-          background: white;
-          border-radius: 1.5rem;
-          padding: 2rem;
-          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
         }
 
         .booking-list-header {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-          font-size: 1.3rem;
-          font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
         }
 
         .booking-list.approved .booking-list-header { color: #10b981; }
         .booking-list.pending .booking-list-header { color: #f59e0b; }
 
         .booking-item {
-          padding: 1.25rem;
-          border-radius: 0.75rem;
-          margin-bottom: 1rem;
-          border-left: 4px solid;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid;
         }
 
         .booking-item.approved {
-          background: #d1fae5;
-          border-color: #10b981;
+            background: #d1fae5;
+            border-color: #10b981;
         }
 
         .booking-item.pending {
-          background: #fef3c7;
-          border-color: #f59e0b;
+            background: #fef3c7;
+            border-color: #f59e0b;
         }
 
         .booking-guest-name {
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 0.25rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
         }
 
         .booking-details {
-          color: #666;
-          font-size: 0.9rem;
-          margin-bottom: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
         }
 
         .booking-notes {
-          color: #888;
-          font-size: 0.85rem;
-          font-style: italic;
+            color: #888;
+            font-size: 0.85rem;
+            font-style: italic;
         }
 
         .booking-form {
-          max-width: 700px;
-          margin: 0 auto;
-          background: white;
-          border-radius: 1.5rem;
-          padding: 3rem;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
         }
 
         .form-section {
-          margin-bottom: 2rem;
+            margin-bottom: 2rem;
         }
 
         .form-label {
-          display: block;
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 0.5rem;
-          font-size: 1rem;
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
         }
 
         .form-input {
-          width: 100%;
-          padding: 1rem;
-          border: 2px solid #e5e7eb;
-          border-radius: 0.75rem;
-          font-size: 1rem;
-          transition: border-color 0.3s ease;
-          font-family: inherit;
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
         }
 
         .form-input:focus {
-          outline: none;
-          border-color: #7b68ee;
-          box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.1);
+            outline: none;
+            border-color: #7b68ee;
+            box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.1);
         }
 
         .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
         }
 
         .form-textarea {
-          min-height: 120px;
-          resize: vertical;
+            min-height: 120px;
+            resize: vertical;
         }
 
         .approval-notice {
-          background: linear-gradient(135deg, #dbeafe, #e0f2fe);
-          border: 2px solid #3b82f6;
-          border-radius: 1rem;
-          padding: 1.5rem;
-          margin-bottom: 2rem;
+            background: linear-gradient(135deg, #dbeafe, #e0f2fe);
+            border: 2px solid #3b82f6;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .approval-notice-title {
-          font-weight: 600;
-          color: #1d4ed8;
-          margin-bottom: 0.5rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
+            font-weight: 600;
+            color: #1d4ed8;
+            margin-bottom: 0.5rem;
         }
 
         .approval-notice-text {
-          color: #1e40af;
-          font-size: 0.9rem;
-          line-height: 1.5;
+            color: #1e40af;
+            font-size: 0.9rem;
+            line-height: 1.5;
         }
 
         .btn-submit {
-          width: 100%;
-          padding: 1.25rem;
-          background: linear-gradient(135deg, #7b68ee, #6a5acd);
-          color: white;
-          border: none;
-          border-radius: 0.75rem;
-          font-size: 1.1rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 8px 25px rgba(123, 104, 238, 0.3);
+            width: 100%;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #7b68ee, #6a5acd);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(123, 104, 238, 0.3);
         }
 
         .btn-submit:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 35px rgba(123, 104, 238, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(123, 104, 238, 0.4);
         }
 
         .success-container {
-          max-width: 600px;
-          margin: 0 auto;
-          text-align: center;
-          background: white;
-          border-radius: 1.5rem;
-          padding: 4rem;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 4rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
         }
 
         .success-icon {
-          font-size: 4rem;
-          margin-bottom: 1.5rem;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
         }
 
         .success-title {
-          font-family: 'Playfair Display', serif;
-          font-size: 2.5rem;
-          color: #10b981;
-          margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #10b981;
+            margin-bottom: 1rem;
         }
 
         .success-message {
-          color: #666;
-          font-size: 1.1rem;
-          line-height: 1.6;
-          margin-bottom: 2rem;
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
         }
 
         .success-details {
-          background: #f9fafb;
-          border-radius: 0.75rem;
-          padding: 1.5rem;
-          margin-bottom: 2rem;
-          font-size: 0.9rem;
-          color: #666;
+            background: #f9fafb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: #666;
         }
 
         .section-header {
-          text-align: center;
-          margin-bottom: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
         }
 
         .section-title {
-          font-family: 'Playfair Display', serif;
-          font-size: 2.5rem;
-          color: #333;
-          margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;
         }
 
         .section-subtitle {
-          color: #666;
-          font-size: 1.1rem;
-          max-width: 600px;
-          margin: 0 auto;
-          line-height: 1.6;
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
         .section {
-          display: none;
+            display: none;
         }
 
         .section.active {
-          display: block;
+            display: block;
         }
 
         @media (max-width: 768px) {
-          .hero h1 { font-size: 3rem; }
-          .hero-content { padding: 2rem; }
-          .content { padding: 2rem 1rem; }
-          .property-gallery {
-            grid-template-columns: 1fr;
-            grid-template-rows: auto;
-          }
-          .property-image.main { grid-row: auto; }
-          .rooms-grid { grid-template-columns: 1fr; }
-          .form-row { grid-template-columns: 1fr; }
-          .nav-container { padding: 0 1rem; }
+            .hero h1 { font-size: 3rem; }
+            .hero-content { padding: 2rem; }
+            .content { padding: 2rem 1rem; }
+            .property-gallery {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            .property-image.main { grid-row: auto; }
+            .rooms-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .nav-container { padding: 0 1rem; }
         }
-      `}</style>
-
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-content">
-          <h1>The Mango Estate</h1>
-          <p className="location">La Jolla, California</p>
-          <p className="subtitle">For the Mango Automotive Corporate Team</p>
-          <div className="hero-buttons">
-            <button className="btn" onClick={() => showSection('calendar')}>
-              📅 View Calendar
-            </button>
-            <button className="btn" onClick={() => showSection('booking')}>
-              🏠 Request Booking
-            </button>
-          </div>
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>The Mango Estate</h1>
+            <p class="location">La Jolla, California</p>
+            <p class="subtitle">For the Mango Automotive Corporate Team</p>
+            <div class="hero-buttons">
+                <button class="btn" onclick="showSection('calendar')">
+                    View Calendar
+                </button>
+                <button class="btn" onclick="showSection('booking')">
+                    Request Booking
+                </button>
+            </div>
         </div>
-      </section>
+    </section>
 
-      {/* Navigation */}
-      <nav className="nav">
-        <div className="nav-container">
-          <div className="nav-brand">🏡 The Mango Estate</div>
-          <div className="nav-links">
-            <button 
-              className={`nav-btn ${activeSection === 'overview' ? 'active' : ''}`}
-              onClick={() => showSection('overview')}
-            >
-              Overview
-            </button>
-            <button 
-              className={`nav-btn ${activeSection === 'calendar' ? 'active' : ''}`}
-              onClick={() => showSection('calendar')}
-            >
-              Calendar
-            </button>
-            <button 
-              className={`nav-btn ${activeSection === 'booking' ? 'active' : ''}`}
-              onClick={() => showSection('booking')}
-            >
-              Book Stay
-            </button>
-          </div>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">The Mango Estate</div>
+            <div class="nav-links">
+                <button class="nav-btn active" onclick="showSection('overview')" data-section="overview">Overview</button>
+                <button class="nav-btn" onclick="showSection('calendar')" data-section="calendar">Calendar</button>
+                <button class="nav-btn" onclick="showSection('booking')" data-section="booking">Book Stay</button>
+            </div>
         </div>
-      </nav>
+    </nav>
 
-      <div className="content">
-        {/* Overview Section */}
-        {activeSection === 'overview' && (
-          <section className="section active">
-            <div className="section-header">
-              <h2 className="section-title">Spanish Colonial Sanctuary</h2>
-              <p className="section-subtitle">
-                Experience the tranquil beauty of our La Jolla retreat, featuring periwinkle blue accents, 
-                terracotta elements, and lush Mediterranean gardens.
-              </p>
+    <div class="content">
+        <section id="overview" class="section active">
+            <div class="section-header">
+                <h2 class="section-title">Spanish Colonial Sanctuary</h2>
+                <p class="section-subtitle">
+                    Experience the tranquil beauty of our La Jolla retreat, featuring periwinkle blue accents, 
+                    terracotta elements, and lush Mediterranean gardens.
+                </p>
             </div>
 
-            {/* Property Gallery */}
-            <div className="property-gallery">
-              <div className="property-image main">
-                <div className="property-overlay">
-                  <h3 className="property-title">Spanish Colonial Courtyard</h3>
-                  <p className="property-desc">Terracotta tiles, periwinkle shutters, and abundant plantings</p>
+            <div class="property-gallery">
+                <div class="property-image main">
+                    <div class="property-overlay">
+                        <h3 class="property-title">Spanish Colonial Courtyard</h3>
+                        <p class="property-desc">Terracotta tiles, periwinkle shutters, and abundant plantings</p>
+                    </div>
                 </div>
-              </div>
-              <div className="property-image casita" style={{
-                background: 'linear-gradient(135deg, rgba(123, 104, 238, 0.2), rgba(255, 255, 255, 0.1)), url("data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 300 250\\"><rect fill=\\"%23faf9f6\\" width=\\"300\\" height=\\"250\\"/><rect fill=\\"%237b68ee\\" x=\\"80\\" y=\\"60\\" width=\\"50\\" height=\\"100\\" rx=\\"5\\"/><rect fill=\\"%237b68ee\\" x=\\"170\\" y=\\"60\\" width=\\"50\\" height=\\"100\\" rx=\\"5\\"/><rect fill=\\"%23cd853f\\" x=\\"0\\" y=\\"180\\" width=\\"300\\" height=\\"70\\"/><circle fill=\\"%23228b22\\" cx=\\"60\\" cy=\\"160\\" r=\\"20\\"/><circle fill=\\"%23228b22\\" cx=\\"240\\" cy=\\"150\\" r=\\"25\\"/></svg>")',
-                backgroundSize: 'cover'
-              }}>
-                <div className="property-overlay">
-                  <h3 className="property-title">The Casita Entrance</h3>
-                  <p className="property-desc">Beautiful blue double doors</p>
+                <div class="property-image casita">
+                    <div class="property-overlay">
+                        <h3 class="property-title">The Casita Entrance</h3>
+                        <p class="property-desc">Beautiful blue double doors</p>
+                    </div>
                 </div>
-              </div>
-              <div className="property-image garden" style={{
-                background: 'linear-gradient(135deg, rgba(34, 139, 34, 0.2), rgba(205, 133, 63, 0.1)), url("data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 300 200\\"><rect fill=\\"%23228b22\\" width=\\"300\\" height=\\"200\\" opacity=\\"0.1\\"/><circle fill=\\"%23228b22\\" cx=\\"80\\" cy=\\"80\\" r=\\"40\\"/><circle fill=\\"%23228b22\\" cx=\\"220\\" cy=\\"60\\" r=\\"35\\"/><circle fill=\\"%23228b22\\" cx=\\"150\\" cy=\\"120\\" r=\\"30\\"/><rect fill=\\"%23cd853f\\" x=\\"60\\" y=\\"140\\" width=\\"50\\" height=\\"50\\" rx=\\"25\\"/><rect fill=\\"%23cd853f\\" x=\\"180\\" y=\\"130\\" width=\\"60\\" height=\\"60\\" rx=\\"30\\"/></svg>")',
-                backgroundSize: 'cover'
-              }}>
-                <div className="property-overlay">
-                  <h3 className="property-title">Lush Gardens</h3>
-                  <p className="property-desc">Tropical plants in terracotta pots</p>
+                <div class="property-image garden">
+                    <div class="property-overlay">
+                        <h3 class="property-title">Lush Gardens</h3>
+                        <p class="property-desc">Tropical plants in terracotta pots</p>
+                    </div>
                 </div>
-              </div>
-              <div className="property-image twins" style={{
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(123, 104, 238, 0.1)), url("data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 300 200\\"><rect fill=\\"%23f5f0e8\\" width=\\"300\\" height=\\"200\\"/><rect fill=\\"%2310b981\\" x=\\"50\\" y=\\"40\\" width=\\"40\\" height=\\"80\\" rx=\\"3\\"/><rect fill=\\"%2310b981\\" x=\\"210\\" y=\\"40\\" width=\\"40\\" height=\\"80\\" rx=\\"3\\"/><rect fill=\\"%23cd853f\\" x=\\"0\\" y=\\"140\\" width=\\"300\\" height=\\"60\\"/><circle fill=\\"%23228b22\\" cx=\\"120\\" cy=\\"120\\" r=\\"15\\"/><circle fill=\\"%23228b22\\" cx=\\"180\\" cy=\\"110\\" r=\\"20\\"/></svg>")',
-                backgroundSize: 'cover'
-              }}>
-                <div className="property-overlay">
-                  <h3 className="property-title">Twin Room</h3>
-                  <p className="property-desc">Garden views with tile flooring</p>
+                <div class="property-image twins">
+                    <div class="property-overlay">
+                        <h3 class="property-title">Interior Spaces</h3>
+                        <p class="property-desc">Clean, modern Spanish design</p>
+                    </div>
                 </div>
-              </div>
-              <div className="property-image interior" style={{
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(123, 104, 238, 0.1)), url("data:image/svg+xml,<svg xmlns=\\"http://www.w3.org/2000/svg\\" viewBox=\\"0 0 300 200\\"><rect fill=\\"%23fafafa\\" width=\\"300\\" height=\\"200\\"/><rect fill=\\"%23e5e7eb\\" x=\\"50\\" y=\\"20\\" width=\\"200\\" height=\\"120\\" rx=\\"5\\"/><rect fill=\\"%237b68ee\\" x=\\"70\\" y=\\"40\\" width=\\"40\\" height=\\"80\\" rx=\\"2\\"/><rect fill=\\"%237b68ee\\" x=\\"190\\" y=\\"40\\" width=\\"40\\" height=\\"80\\" rx=\\"2\\"/><rect fill=\\"%23cd853f\\" x=\\"0\\" y=\\"160\\" width=\\"300\\" height=\\"40\\"/></svg>")',
-                backgroundSize: 'cover'
-              }}>
-                <div className="property-overlay">
-                  <h3 className="property-title">Interior Spaces</h3>
-                  <p className="property-desc">Clean, modern Spanish design</p>
+                <div class="property-image exterior">
+                    <div class="property-overlay">
+                        <h3 class="property-title">Street View</h3>
+                        <p class="property-desc">Spanish colonial architecture</p>
+                    </div>
                 </div>
-              </div>
             </div>
 
-            {/* Rooms */}
-            <div className="section-header">
-              <h2 className="section-title">Available Accommodations</h2>
+            <div class="section-header">
+                <h2 class="section-title">Available Accommodations</h2>
             </div>
             
-            <div className="rooms-grid">
-              <div className="room-card casita">
-                <div className="room-header"></div>
-                <div className="room-content">
-                  <h3 className="room-title">The Casita</h3>
-                  <p className="room-subtitle">Queen bed for 2 adults</p>
-                  <p className="room-description">
-                    Features beautiful blue double doors opening to the courtyard with terracotta tile flooring 
-                    and Spanish colonial architectural details.
-                  </p>
+            <div class="rooms-grid">
+                <div class="room-card casita">
+                    <div class="room-header"></div>
+                    <div class="room-content">
+                        <h3 class="room-title">The Casita</h3>
+                        <p class="room-subtitle">Queen bed for 2 adults</p>
+                        <p class="room-description">
+                            Features beautiful blue double doors opening to the courtyard with terracotta tile flooring 
+                            and Spanish colonial architectural details.
+                        </p>
+                    </div>
                 </div>
-              </div>
 
-              <div className="room-card twins">
-                <div className="room-header"></div>
-                <div className="room-content">
-                  <h3 className="room-title">Twin Room</h3>
-                  <p className="room-subtitle">Twin beds for 2 kids or 1 adult</p>
-                  <p className="room-description">
-                    Overlooks the lush garden with terracotta tile flooring and views of the 
-                    tropical plantings in their beautiful terracotta pots.
-                  </p>
+                <div class="room-card twins">
+                    <div class="room-header"></div>
+                    <div class="room-content">
+                        <h3 class="room-title">Twin Room</h3>
+                        <p class="room-subtitle">Twin beds for 2 kids or 1 adult</p>
+                        <p class="room-description">
+                            Overlooks the lush garden with terracotta tile flooring and views of the 
+                            tropical plantings in their beautiful terracotta pots.
+                        </p>
+                    </div>
                 </div>
-              </div>
 
-              <div className="room-card flexible">
-                <div className="room-header"></div>
-                <div className="room-content">
-                  <h3 className="room-title">I'll Find Space Somewhere</h3>
-                  <p className="room-subtitle">You're already booked, but pretty please let me in</p>
-                  <p className="room-description">
-                    For when your heart is set on staying at The Mango Estate, even when we're at capacity. 
-                    We'll make it work somehow!
-                  </p>
+                <div class="room-card flexible">
+                    <div class="room-header"></div>
+                    <div class="room-content">
+                        <h3 class="room-title">I'll Find Space Somewhere</h3>
+                        <p class="room-subtitle">You're already booked, but pretty please let me in</p>
+                        <p class="room-description">
+                            For when your heart is set on staying at The Mango Estate, even when we're at capacity. 
+                            We'll make it work somehow!
+                        </p>
+                    </div>
                 </div>
-              </div>
             </div>
-          </section>
-        )}
+        </section>
 
-        {/* Calendar Section */}
-        {activeSection === 'calendar' && (
-          <section className="section active">
-            <div className="section-header">
-              <h2 className="section-title">Booking Calendar</h2>
-              <p className="section-subtitle">
-                View approved bookings and pending requests for your team's La Jolla retreat
-              </p>
+        <section id="calendar" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Booking Calendar</h2>
+                <p class="section-subtitle">
+                    View approved bookings and pending requests for your team's La Jolla retreat
+                </p>
             </div>
 
-            <div className="calendar-container">
-              <div className="calendar-header">
-                <h3 className="calendar-title">September - October 2025</h3>
-              </div>
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <h3 class="calendar-title">September - October 2025</h3>
+                </div>
 
-              <div className="calendar-grid">
-                <div className="calendar-day-header">Sun</div>
-                <div className="calendar-day-header">Mon</div>
-                <div className="calendar-day-header">Tue</div>
-                <div className="calendar-day-header">Wed</div>
-                <div className="calendar-day-header">Thu</div>
-                <div className="calendar-day-header">Fri</div>
-                <div className="calendar-day-header">Sat</div>
-              </div>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+                </div>
 
-              <div className="calendar-grid">
-                {generateCalendar()}
-              </div>
+                <div class="calendar-grid" id="calendarDays"></div>
             </div>
 
-            <div className="booking-lists">
-              <div className="booking-list approved">
-                <div className="booking-list-header">
-                  ✅ Approved Bookings
-                </div>
-                
-                <div className="booking-item approved">
-                  <div className="booking-guest-name">Sarah & Mike Johnson</div>
-                  <div className="booking-details">The Casita • September 15-18, 2025</div>
+            <div class="booking-lists">
+                <div class="booking-list approved">
+                    <div class="booking-list-header">Approved Bookings</div>
+                    <div class="booking-item approved">
+                        <div class="booking-guest-name">Sarah & Mike Johnson</div>
+                        <div class="booking-details">The Casita • September 15-18, 2025</div>
+                    </div>
+                    <div class="booking-item approved">
+                        <div class="booking-guest-name">The Rodriguez Family</div>
+                        <div class="booking-details">Twin Room • September 22-25, 2025</div>
+                    </div>
                 </div>
 
-                <div className="booking-item approved">
-                  <div className="booking-guest-name">The Rodriguez Family</div>
-                  <div className="booking-details">Twin Room • September 22-25, 2025</div>
+                <div class="booking-list pending">
+                    <div class="booking-list-header">Pending Requests</div>
+                    <div class="booking-item pending">
+                        <div class="booking-guest-name">Alex Thompson</div>
+                        <div class="booking-details">I'll Find Space Somewhere • October 5-7, 2025</div>
+                        <div class="booking-notes">"Happy to sleep on the couch! Just need a quick getaway."</div>
+                    </div>
                 </div>
-              </div>
-
-              <div className="booking-list pending">
-                <div className="booking-list-header">
-                  ⏳ Pending Requests
-                </div>
-                
-                <div className="booking-item pending">
-                  <div className="booking-guest-name">Alex Thompson</div>
-                  <div className="booking-details">I'll Find Space Somewhere • October 5-7, 2025</div>
-                  <div className="booking-notes">"Happy to sleep on the couch! Just need a quick getaway."</div>
-                </div>
-              </div>
             </div>
-          </section>
-        )}
+        </section>
 
-        {/* Booking Form Section */}
-        {activeSection === 'booking' && (
-          <section className="section active">
-            <div className="section-header">
-              <h2 className="section-title">Request Your Stay</h2>
-              <p className="section-subtitle">
-                Submit your booking request for Jesse's approval
-              </p>
+        <section id="booking" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Request Your Stay</h2>
+                <p class="section-subtitle">Submit your booking request for Jesse's approval</p>
             </div>
 
-            <div className="booking-form">
-              <div className="form-section">
-                <label className="form-label">Guest Name(s) *</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  value={formData.guestName}
-                  onChange={(e) => handleInputChange('guestName', e.target.value)}
-                  placeholder="e.g., Sarah & Mike Johnson"
-                />
-              </div>
-
-              <div className="form-section">
-                <div className="form-row">
-                  <div>
-                    <label className="form-label">Check-in Date *</label>
-                    <input 
-                      type="date" 
-                      className="form-input" 
-                      value={formData.checkIn}
-                      onChange={(e) => handleInputChange('checkIn', e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="form-label">Check-out Date *</label>
-                    <input 
-                      type="date" 
-                      className="form-input" 
-                      value={formData.checkOut}
-                      onChange={(e) => handleInputChange('checkOut', e.target.value)}
-                    />
-                  </div>
+            <div class="booking-form">
+                <div class="form-section">
+                    <label class="form-label">Guest Name(s) *</label>
+                    <input type="text" class="form-input" name="guestName" placeholder="e.g., Sarah & Mike Johnson">
                 </div>
-              </div>
 
-              <div className="form-section">
-                <label className="form-label">Room Preference *</label>
-                <select 
-                  className="form-input" 
-                  value={formData.room}
-                  onChange={(e) => handleInputChange('room', e.target.value)}
-                >
-                  <option value="casita">The Casita - Queen bed for 2 adults</option>
-                  <option value="twins">Twin Room - Twin beds for 2 kids or 1 adult</option>
-                  <option value="flexible">I'll Find Space Somewhere - Pretty please let me in</option>
-                </select>
-              </div>
-
-              <div className="form-section">
-                <label className="form-label">Number of Guests</label>
-                <select 
-                  className="form-input" 
-                  value={formData.guests}
-                  onChange={(e) => handleInputChange('guests', e.target.value)}
-                >
-                  <option value="1">1 guest</option>
-                  <option value="2">2 guests</option>
-                  <option value="3">3 guests</option>
-                  <option value="4">4 guests</option>
-                  <option value="5">5 guests</option>
-                  <option value="6">6 guests</option>
-                </select>
-              </div>
-
-              <div className="form-section">
-                <label className="form-label">Notes (Optional)</label>
-                <textarea 
-                  className="form-input form-textarea" 
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange('notes', e.target.value)}
-                  placeholder="Any special requests or notes for Jesse..."
-                />
-              </div>
-
-              <div className="approval-notice">
-                <div className="approval-notice-title">
-                  📧 Approval Process
+                <div class="form-section">
+                    <div class="form-row">
+                        <div>
+                            <label class="form-label">Check-in Date *</label>
+                            <input type="date" class="form-input" name="checkIn">
+                        </div>
+                        <div>
+                            <label class="form-label">Check-out Date *</label>
+                            <input type="date" class="form-input" name="checkOut">
+                        </div>
+                    </div>
                 </div>
-                <div className="approval-notice-text">
-                  Your request will be sent to Jesse for review:<br/>
-                  • j.anne.pacific@gmail.com<br/>
-                  • sorenharrison@gmail.com<br/><br/>
-                  You'll receive confirmation once approved and your booking will appear on the calendar.
-                </div>
-              </div>
 
-              <button onClick={handleBookingSubmit} className="btn-submit">
-                Submit Booking Request
-              </button>
+                <div class="form-section">
+                    <label class="form-label">Room Preference *</label>
+                    <select class="form-input" name="room">
+                        <option value="casita">The Casita - Queen bed for 2 adults</option>
+                        <option value="twins">Twin Room - Twin beds for 2 kids or 1 adult</option>
+                        <option value="flexible">I'll Find Space Somewhere - Pretty please let me in</option>
+                    </select>
+                </div>
+
+                <div class="form-section">
+                    <label class="form-label">Number of Guests</label>
+                    <select class="form-input" name="guests">
+                        <option value="1">1 guest</option>
+                        <option value="2">2 guests</option>
+                        <option value="3">3 guests</option>
+                        <option value="4">4 guests</option>
+                        <option value="5">5 guests</option>
+                        <option value="6">6 guests</option>
+                    </select>
+                </div>
+
+                <div class="form-section">
+                    <label class="form-label">Notes (Optional)</label>
+                    <textarea class="form-input form-textarea" name="notes" placeholder="Any special requests or notes for Jesse..."></textarea>
+                </div>
+
+                <div class="approval-notice">
+                    <div class="approval-notice-title">Approval Process</div>
+                    <div class="approval-notice-text">
+                        Your request will be sent to Jesse for review:<br>
+                        • j.anne.pacific@gmail.com<br>
+                        • sorenharrison@gmail.com<br><br>
+                        You'll receive confirmation once approved and your booking will appear on the calendar.
+                    </div>
+                </div>
+
+                <button type="button" class="btn-submit" onclick="handleSubmit()">
+                    Submit Booking Request
+                </button>
             </div>
-          </section>
-        )}
+        </section>
 
-        {/* Success Section */}
-        {activeSection === 'success' && (
-          <section className="section active">
-            <div className="success-container">
-              <div className="success-icon">✅</div>
-              <h2 className="success-title">Request Submitted!</h2>
-              <p className="success-message">
-                Your booking request has been sent to Jesse for approval. 
-                You'll receive an email confirmation once it's reviewed.
-              </p>
-              <div className="success-details">
-                <strong>Request sent to:</strong><br/>
-                j.anne.pacific@gmail.com<br/>
-                sorenharrison@gmail.com
-              </div>
-              <button className="btn" onClick={() => showSection('calendar')}>
-                View Calendar
-              </button>
+        <section id="success" class="section">
+            <div class="success-container">
+                <div class="success-icon">✅</div>
+                <h2 class="success-title">Request Submitted!</h2>
+                <p class="success-message">
+                    Your booking request has been sent to Jesse for approval. 
+                    You'll receive an email confirmation once it's reviewed.
+                </p>
+                <div class="success-details">
+                    <strong>Request sent to:</strong><br>
+                    j.anne.pacific@gmail.com<br>
+                    sorenharrison@gmail.com
+                </div>
+                <button class="btn" onclick="showSection('calendar')">View Calendar</button>
             </div>
-          </section>
-        )}
-      </div>
+        </section>
     </div>
-  );
-};
 
-export default MangoEstate;
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+        }
+
+        function generateCalendar() {
+            const calendarDays = document.getElementById('calendarDays');
+            const approvedDays = [15, 16, 17, 22, 23, 24];
+            const pendingDays = [5, 6];
+            
+            for (let i = 0; i < 35; i++) {
+                const day = i - 5;
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                
+                if (day <= 0) {
+                    dayElement.classList.add('empty');
+                } else {
+                    const dayNumber = document.createElement('div');
+                    dayNumber.textContent = day;
+                    dayElement.appendChild(dayNumber);
+                    
+                    if (approvedDays.includes(day)) {
+                        dayElement.classList.add('approved');
+                        const guestElement = document.createElement('div');
+                        guestElement.className = 'booking-guest';
+                        guestElement.textContent = day >= 15 && day <= 17 ? 'Sarah & Mike' : 'Rodriguez';
+                        dayElement.appendChild(guestElement);
+                    } else if (pendingDays.includes(day)) {
+                        dayElement.classList.add('pending');
+                        const guestElement = document.createElement('div');
+                        guestElement.className = 'booking-guest';
+                        guestElement.textContent = 'Pending';
+                        dayElement.appendChild(guestElement);
+                    } else {
+                        dayElement.classList.add('available');
+                    }
+                }
+                
+                calendarDays.appendChild(dayElement);
+            }
+        }
+
+        function handleSubmit() {
+            const guestName = document.querySelector('input[name="guestName"]').value;
+            const checkIn = document.querySelector('input[name="checkIn"]').value;
+            const checkOut = document.querySelector('input[name="checkOut"]').value;
+            
+            if (!guestName || !checkIn || !checkOut) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            showSection('success');
+            document.querySelector('.booking-form').reset();
+        }
+
+        document.addEventListener('DOMContentLoaded', generateCalendar);
+    </script>
+</body>
+</html>
